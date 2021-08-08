@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Main</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+  </head>
+  <body>
+    <div class="container">
+      <form action="/chat" method="post">
+        <div class="form-group">
+          <label for="ip">IP</label>
+          <input class="form-control" id="ip" name="ip" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label for="sport">Send port</label>
+          <input class="form-control" id="sport" name="sport" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label for="rport">Receive port</label>
+          <input class="form-control" id="rport" name="rport" autocomplete="off">
+        </div><br>
+        <button type="submit" class="btn btn-primary">Connect</button>
+      </form>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+  </body>
+</html>

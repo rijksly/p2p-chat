@@ -1,0 +1,50 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Chat</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+  </head>
+  <body>
+    <div class="container" action="/chat1" method="post">
+      <p id="messages">
+        {% for i in json %}
+          {{ i }}
+        {% endfor %}
+      </p>
+      <div class="form-group">
+        <input class="form-control" autocomplete="off">
+      </div>
+      <button type="submit" class="btn btn-primary" onclick="send();">Send</button>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      async function send(){
+        var response = await fetch('/send', {
+          method: 'POST',
+          body: JSON.stringify({
+            message: document.getElementsByTagName('input')[0].value
+          }),
+          headers: new Headers()
+        });
+        var data = await response.text();
+        if (data != 'ok'){
+          alert("The message wasn't delivered")
+        };
+      };
+
+      async function request(){
+        var response = await fetch('/json');
+        var data = await response.json();
+        document.getElementsByTagName('p')[0].innerHTML = data.join('<br>');
+      };
+
+      try{
+        var timerId = setInterval(request, 5000);
+      } catch (error){
+        clearTimeout(timerId);
+        alert(error.name);
+      };
+    </script>
+  </body>
+</html>

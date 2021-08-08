@@ -1,39 +1,66 @@
-from sys import argv
 import socket
+from flask import Flask, render_template, request, redirect, jsonify
+
+app = Flask(__name__)
 
 def init_send_socket(ip, port):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((ip, int(port)))
-    print('send socket connected')
+    print('Send socket connected')
 
     return s
 
-def init_accept_socket(ip, port):
+def init_receive_socket(ip, port):
     serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     serversocket.bind((ip, int(port)))
     serversocket.listen(1)
     (clientsocket, address) = serversocket.accept()
-    print('accept socket connected')
+    print('Receive socket connected')
 
     return clientsocket
 
-read_or_write = input('Would you like to send (s) or to receive (r)?: ')
+def init_socket(func, ip, port):
+    socket = ''
+    try:
+        while socket == '':
+            socket = func(ip, port)
+    except ConnectionRefusedError:
+        print('Connection refused')
+        socket = init_socket(func, ip, port)
 
-if read_or_write == 's':
-    send = init_send_socket(argv[1], argv[2])
+    return socket
 
-    message = input('Message: ')
-    send.send(bytes(message, encoding = 'UTF-8'))
-elif read_or_write == 'r':
-    receive = init_accept_socket(argv[1], argv[3])
+sockets = {}
+json = []
 
-    while True:
-        data = receive.recv(1024)
-        if not data == b'':
-            print(data.decode())
-            break
+@app.route('/', methods=['GET'])
+def mainn():
+    return render_template('main.html')
 
-if read_or_write == 's':
-    send.close()
-elif read_or_write == 'r':
-    receive.close()
+@app.route('/chat', methods=['POST'])
+def chat():
+    sockets['send'] = init_socket(init_send_socket, request.form.get('ip'), request.form.get('sport'))
+    sockets['receive'] = init_socket(init_receive_socket, request.form.get('ip'), request.form.get('rport'))
+
+    return render_template('chat.html', json=json)
+
+@app.route('/json', methods=['GET'])
+def json():
+    try:
+        data = sockets['receive'].recv(1024)
+    except KeyError:
+        return redirect('/chat1')
+    if not data == b'':
+        json.append('2: ' + data.decode())
+
+    return jsonify(json)
+
+@app.route('/send', methods=['POST'])
+def send():
+    sockets['send'].send(bytes(request.get_json(force=True)['message'], encoding = 'UTF-8'))
+    json.append('1: ' + message)
+
+    return 'ok'
+
+if __name__ == '__main__':
+    app.run(debug=True)

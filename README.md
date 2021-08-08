@@ -1,15 +1,25 @@
 # Peer-to-peer python chat
 
-Script that can send one message between two computers.
+Simple P2P chat with web interface.
 
-## Dependencies
+## Installation
 
-- Python 3.x
+1. Install Python 3.x
+2. Clone this repository
+3. Install flask:
+
+        pip install flask
+
+4. Go to the folder:
+
+        cd p2p-chat
 
 ## Usage
 
-- main.py:
+1.
 
-      python main.py (IP address of computer with other file running) (send port) (receive port)
+        python main.py
 
-Port must be the same on both computers (send on first - receive on second etc.).
+2. Enter your companion's IP address, send port and receive port (he must enter your send port as receive port and your send port as receive port) and click "Connect".
+3. Your companion must do the same at this time.
+4. Chat.
