@@ -1,7 +1,7 @@
 import socket
 from flask import Flask, render_template, request, redirect, jsonify
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="static")
 
 def init_send_socket(ip, port):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
