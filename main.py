@@ -31,7 +31,7 @@ def init_socket(func, ip, port):
     return socket
 
 sockets = {}
-json = []
+messages = []
 
 @app.route('/', methods=['GET'])
 def mainn():
@@ -42,7 +42,7 @@ def chat():
     sockets['send'] = init_socket(init_send_socket, request.form.get('ip'), request.form.get('sport'))
     sockets['receive'] = init_socket(init_receive_socket, request.form.get('ip'), request.form.get('rport'))
 
-    return render_template('chat.html', json=json)
+    return render_template('chat.html', json=messages)
 
 @app.route('/json', methods=['GET'])
 def json():
@@ -51,14 +51,14 @@ def json():
     except KeyError:
         return redirect('/chat1')
     if not data == b'':
-        json.append('2: ' + data.decode())
+        messages.append('2: ' + data.decode())
 
-    return jsonify(json)
+    return jsonify(messages)
 
 @app.route('/send', methods=['POST'])
 def send():
     sockets['send'].send(bytes(request.get_json(force=True)['message'], encoding = 'UTF-8'))
-    json.append('1: ' + message)
+    messages.append('1: ' + message)
 
     return 'ok'
 
