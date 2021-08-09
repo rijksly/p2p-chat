@@ -46,6 +46,10 @@ def chat():
 
 @app.route('/json', methods=['GET'])
 def json():
+    return jsonify(messages)
+
+@app.route('/receive', methods=['GET'])
+def receive():
     try:
         data = sockets['receive'].recv(1024)
     except KeyError:
@@ -53,11 +57,12 @@ def json():
     if not data == b'':
         messages.append('2: ' + data.decode())
 
-    return jsonify(messages)
+    return 'ok'
 
 @app.route('/send', methods=['POST'])
 def send():
-    sockets['send'].send(bytes(request.get_json(force=True)['message'], encoding = 'UTF-8'))
+    message = request.get_json(force=True)['message']
+    sockets['send'].send(bytes(message, encoding = 'UTF-8'))
     messages.append('1: ' + message)
 
     return 'ok'
