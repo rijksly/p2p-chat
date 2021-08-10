@@ -20,6 +20,7 @@ Simple P2P chat with web interface.
 
         python main.py
 
-2. Enter your companion's IP address, send port and receive port (he must enter your send port as receive port and your send port as receive port) and click "Connect".
-3. Your companion must do the same at this time.
-4. Chat.
+2. Enter your companion's IP address, send port and receive port (he must enter your send port as receive port and your send port as receive port).
+3. Select number (if your number is 1, your companion's number must be 2 etc.) and click "Connect".
+4. Your companion must do the same at this time.
+5. Chat.

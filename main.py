@@ -1,4 +1,5 @@
 import socket
+
 from flask import Flask, render_template, request, redirect, jsonify
 
 app = Flask(__name__, static_folder="static")
@@ -39,8 +40,14 @@ def mainn():
 
 @app.route('/chat', methods=['POST'])
 def chat():
-    sockets['send'] = init_socket(init_send_socket, request.form.get('ip'), request.form.get('sport'))
-    sockets['receive'] = init_socket(init_receive_socket, request.form.get('ip'), request.form.get('rport'))
+    if request.form.get('number') == '1':
+        sockets['send'] = init_socket(init_send_socket, request.form.get('ip'), request.form.get('sport'))
+        sockets['receive'] = init_socket(init_receive_socket, request.form.get('ip'), request.form.get('rport'))
+    elif request.form.get('number') == '2':
+        sockets['receive'] = init_socket(init_receive_socket, request.form.get('ip'), request.form.get('rport'))
+        sockets['send'] = init_socket(init_send_socket, request.form.get('ip'), request.form.get('sport'))
+    else:
+        return 'error'
 
     return render_template('chat.html', json=messages)
 
