@@ -6,10 +6,7 @@ async function send(){
     }),
     headers: new Headers()
   });
-  //var data = await response.text();
-  //if (data != 'ok'){
-  //  alert("The message wasn't delivered")
-  //};
+  document.getElementsByTagName('input')[0].value = '';
 };
 
 async function json(){
@@ -18,12 +15,13 @@ async function json(){
   document.getElementsByTagName('p')[0].innerHTML = data.join('<br>');
 };
 
+function sleep(ms){
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 async function receive(){
   var response = await fetch('/receive');
-  //var data = await response.text();
-  //if (data != 'ok'){
-  //  alert("The message wasn't delivered")
-  //};
+  await sleep(3000);
   receive();
 };
 

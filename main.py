@@ -1,6 +1,8 @@
 import socket
+from time import sleep
 
 from flask import Flask, render_template, request, redirect, jsonify
+import rsa
 
 app = Flask(__name__, static_folder="static")
 
@@ -32,6 +34,16 @@ def init_socket(func, ip, port):
     return socket
 
 sockets = {}
+keys = {'pubkey':'', 'privkey':''} #privkey is your private RSA key, pubkey is your companion's public key
+
+def get_pubkey():
+    sockets['receive'] = init_socket(init_receive_socket, request.form.get('ip'), request.form.get('rport'))
+    keys['pubkey'] = rsa.PublicKey.load_pkcs1(sockets['receive'].recv(1024).decode())
+
+def send_pubkey(pubkey):
+    sockets['send'] = init_socket(init_send_socket, request.form.get('ip'), request.form.get('sport'))
+    sockets['send'].send(pubkey.save_pkcs1())
+
 messages = []
 
 @app.route('/', methods=['GET'])
@@ -40,12 +52,14 @@ def mainn():
 
 @app.route('/chat', methods=['POST'])
 def chat():
+    (pubkey, keys['privkey']) = rsa.newkeys(512)
     if request.form.get('number') == '1':
-        sockets['send'] = init_socket(init_send_socket, request.form.get('ip'), request.form.get('sport'))
-        sockets['receive'] = init_socket(init_receive_socket, request.form.get('ip'), request.form.get('rport'))
+        get_pubkey()
+        sleep(5) #to make sure that another user is already receiving
+        send_pubkey(pubkey)
     elif request.form.get('number') == '2':
-        sockets['receive'] = init_socket(init_receive_socket, request.form.get('ip'), request.form.get('rport'))
-        sockets['send'] = init_socket(init_send_socket, request.form.get('ip'), request.form.get('sport'))
+        send_pubkey(pubkey)
+        get_pubkey()
     else:
         return 'error'
 
@@ -62,15 +76,16 @@ def receive():
     except KeyError:
         return redirect('/chat1')
     if not data == b'':
-        messages.append('2: ' + data.decode())
+        messages.append('2: ' + rsa.decrypt(data, keys['privkey']).decode())
 
     return 'ok'
 
 @app.route('/send', methods=['POST'])
 def send():
     message = request.get_json(force=True)['message']
-    sockets['send'].send(bytes(message, encoding = 'UTF-8'))
     messages.append('1: ' + message)
+    data = rsa.encrypt(bytes(message, encoding = 'UTF-8'), keys['pubkey'])
+    sockets['send'].send(data)
 
     return 'ok'
 
