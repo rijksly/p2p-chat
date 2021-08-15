@@ -1,6 +1,6 @@
 # Peer-to-peer python chat
 
-Simple P2P chat with web interface.
+Simple P2P chat with web interface. Doesn't work on Windows, gives OSError: [WinError 10049] error.
 
 ## Installation
 
